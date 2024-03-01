@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16.2-alpine
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=drizzle
+      - POSTGRES_PASSWORD=secretPassword
+    volumes:
+      - postgres_data:/var/lib/postgresql/data:rw
+
+  pgbouncer:
+    image: edoburu/pgbouncer
+    environment:
+      - DB_USER=postgres
+      - DB_PASSWORD=secretPassword
+      - DB_HOST=postgres
+      - DB_NAME=drizzle
+      - POOL_MODE=transaction
+      - ADMIN_USERS=postgres
+      - AUTH_TYPE=scram-sha-256
+    ports:
+      - "5432:5432"
+    depends_on:
+      - postgres
+volumes:
+  postgres_data:
